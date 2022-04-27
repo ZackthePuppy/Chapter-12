@@ -1,0 +1,7 @@
+{
+    "java.project.sourcePaths": [
+        "Test File/Test File/src",
+        "CourseGrades/src"
+    ],
+    "git.ignoreLimitWarning": true
+}
