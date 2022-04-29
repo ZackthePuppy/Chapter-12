@@ -206,7 +206,6 @@ public class Functions implements Serializable {
                 FileInputStream in = new FileInputStream(stuFile);
                 ObjectInputStream openGradeBook = new ObjectInputStream(in);
 
-                System.out.println("Written to text");
                 GradeBook grread = (GradeBook) openGradeBook.readObject();
 
                 // openGradeBook.close();

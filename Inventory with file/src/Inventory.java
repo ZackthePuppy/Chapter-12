@@ -1,4 +1,6 @@
-public class Inventory {
+import java.io.Serializable;
+
+public class Inventory implements Serializable {
     private int stockNum, itemQty;
     private String itemName;
 
