@@ -19,13 +19,16 @@ public class Process implements Serializable {
                 ObjectOutputStream writeInventory = new ObjectOutputStream(out);
                 // @SuppressWarnings ("unchecked")
 
+                // for (int x=0; x<inventFile.size(); x++){
+                //     writeInventory.writeObject(inventFile.get(x).getItemName());
+                // }
                 writeInventory.writeObject(inventFile);
                 writeInventory.close();
-                System.out.println("DATA IN FILES ADDED/UPDATED SUCCESSFULLY!");
-                g.printBox("Item Successfully Added!");
-                System.out.println("Stock Number: " + inventFile.get(inventFile.size()-1).getstockNum() + "\nItem Name: " + inventFile.get(inventFile.size()-1).getItemName() + "\nQuantity: "
-                        + inventFile.get(inventFile.size()-1).getitemQty());
-                g.enterToContinue();
+                // System.out.println("DATA IN FILES ADDED/UPDATED SUCCESSFULLY!");
+                // g.printBox("Item Successfully Added!");
+                // System.out.println("Stock Number: " + inventFile.get(inventFile.size()-1).getstockNum() + "\nItem Name: " + inventFile.get(inventFile.size()-1).getItemName() + "\nQuantity: "
+                //         + inventFile.get(inventFile.size()-1).getitemQty());
+               
             } catch (FileNotFoundException e) {
                 System.out.println("File could not be found.");
                 System.err.println("FileNotFoundException: "
@@ -39,29 +42,6 @@ public class Process implements Serializable {
         }
     }
 
-    public void storeUpdated (ArrayList <Inventory> inventFile){
-
-        if (inventoryFile.exists()) {
-            try {
-                /* write objects */
-                FileOutputStream out = new FileOutputStream(inventoryFile);
-                ObjectOutputStream writeInventory = new ObjectOutputStream(out);
-                // @SuppressWarnings ("unchecked")
-
-                writeInventory.writeObject(inventFile);
-                writeInventory.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("File could not be found.");
-                System.err.println("FileNotFoundException: "
-                        + e.getMessage());
-            } catch (IOException e) {
-                System.out.println("Problem with input/output.");
-                System.err.println("IOException: " + e.getMessage());
-            } 
-        } else {
-            System.out.println("No File Found!!!");
-        }
-    }
     public void addItem() {
         g.clearConsole();
         g.printBox("ADD AN ITEM");
@@ -72,45 +52,34 @@ public class Process implements Serializable {
         System.out.print("Item Quantity: ");
         int qty = sc.nextInt();
 
-        inv = new Inventory((1000 + stockNum), qty, item);
+        inv = new Inventory((inventories.size() + 1000), qty, item);
         inventories.add(inv);
 
         g.printBox("Item Successfully Added!");
         System.out.println("Stock Number: " + inventories.get(inventories.size()-1).getstockNum() + "\nItem Name: " + inventories.get(inventories.size()-1).getItemName() + "\nQuantity: "
                 + inventories.get(inventories.size()-1).getitemQty());
-        g.enterToContinue();
-
-    }
-
-    public void newItem() {
-        g.clearConsole();
-        g.printBox("ADD AN ITEM");
-
-        System.out.print("Item Name: ");
-        String item = sc.next().toUpperCase();
-
-        System.out.print("Item Quantity: ");
-        int qty = sc.nextInt();
-
-        inv = new Inventory((1000 + stockNum), qty, item);
-        inventories.add(inv);
-
-        g.clearConsole();
         storeObj(inventories);
-
-    }
-
-    public void displayAll(ArrayList <Inventory> inventFile) {
-        g.clearConsole();
-        g.printBox("INVENTORY LIST");
-        String format = "%-15s %15s %15s \n";
-        System.out.printf(format, "ITEM NAME", "STOCK NUMBER", "ITEM QUANTITY");
-        for (int x = 0; x < inventFile.size(); x++) {
-            System.out.printf(format, inventFile.get(x).getItemName(), inventFile.get(x).getstockNum(),
-            inventFile.get(x).getitemQty() + " PCS");
-        }
         g.enterToContinue();
+
     }
+
+    // public void newItem() {
+    //     g.clearConsole();
+    //     g.printBox("ADD AN ITEM");
+
+    //     System.out.print("Item Name: ");
+    //     String item = sc.next().toUpperCase();
+
+    //     System.out.print("Item Quantity: ");
+    //     int qty = sc.nextInt();
+
+    //     inv = new Inventory((1000 + stockNum), qty, item);
+    //     inventories.add(inv);
+
+    //     g.clearConsole();
+    //     storeObj(inventories);
+
+    // }
 
     public void discontinue() {
 
@@ -135,6 +104,7 @@ public class Process implements Serializable {
                     System.out.println("Product Successfully Discontinued!");
                 }
         
+                storeObj(inventories);
                 g.enterToContinue();
        
     }
@@ -165,6 +135,18 @@ public class Process implements Serializable {
         }
     }
 
+    public void displayAll(ArrayList <Inventory> inventFile) {
+        g.clearConsole();
+        g.printBox("INVENTORY LIST");
+        String format = "%-15s %15s %15s \n";
+        System.out.printf(format, "ITEM NAME", "STOCK NUMBER", "ITEM QUANTITY");
+        for (int x = 0; x < inventFile.size(); x++) {
+            System.out.printf(format, inventFile.get(x).getItemName(), inventFile.get(x).getstockNum(),
+            inventFile.get(x).getitemQty() + " PCS");
+        }
+        g.enterToContinue();
+    }
+
     public void menu() {
         boolean mainLoop = true;
 
@@ -175,6 +157,10 @@ public class Process implements Serializable {
                 @SuppressWarnings ("unchecked")
                 ArrayList <Inventory> inventFile = (ArrayList <Inventory>) readInventory.readObject();
                 
+                if (inventFile.size() != 0 && inventories.size() ==0){
+                    inventories = inventFile;
+                }
+
             g.printBox("INVENTORY");
 
             System.out.print("[1] - Add Item \n[2] - Discontinue an Item \n[3] - Display the Amount of Stock of an Item"
@@ -214,12 +200,11 @@ public class Process implements Serializable {
                 System.err.println("FileNotFoundException: "
                         + e.getMessage());
             } catch (IOException e) {
-                System.out.println("Problem with input/output.");
-                System.err.println("IOException: " + e.getMessage());
                 if (e.getMessage() == null){
-                    System.out.println("There is no items in your Inventory! Let's add atleast one");
+                    g.clearConsole();
+                    g.printBox("There is no items in your Inventory! Let's add atleast one");
                     g.enterToContinue();
-                    newItem();
+                    addItem();
                 }
             } catch (ClassNotFoundException e) {
                 System.out.println("Class could not be used to cast object.");
